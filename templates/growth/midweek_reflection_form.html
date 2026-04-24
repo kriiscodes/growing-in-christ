@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Midweek Reflection{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Last Week" title="Midweek Reflection" back_url="/" back_label="Back" %}
+
+<div class="md:max-w-xl">
+
+  <!-- Previous takeaway context -->
+  {% if previous_takeaway %}
+  <div class="bg-app-peach rounded-2xl px-6 py-5 mb-6">
+    <p class="font-sans text-[9px] tracking-widest uppercase text-accent font-medium mb-2">
+      Your takeaway from {{ previous_week.date_label }}
+    </p>
+    <p class="font-serif text-sm text-ink-mid leading-loose italic">{{ previous_takeaway.action_step }}</p>
+  </div>
+  {% endif %}
+
+  {% if is_edit %}
+  <p class="font-serif text-sm text-ink-light italic mb-6">You can update your response below.</p>
+  {% endif %}
+
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+
+    <div>
+      <label class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent font-medium block mb-2">
+        How did that step go?
+      </label>
+
+      <!-- Hidden select for form submission -->
+      <select name="status" id="id_status" class="sr-only">
+        {% for value, label in form.status.field.choices %}
+          <option value="{{ value }}" {% if form.status.value == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Custom dropdown -->
+      <div class="relative" id="dropdown-wrapper">
+        <button type="button" id="dropdown-trigger"
+                class="w-full bg-[#FFFCF7] rounded-xl px-4 py-3 text-base text-left flex items-center justify-between border border-[#383831]/15 focus:outline-none focus:shadow-[0_0_0_3px_rgba(105,93,74,0.14)]">
+          <span id="dropdown-label" class="font-sans text-sm text-[#383831]">
+            {% for value, label in form.status.field.choices %}{% if form.status.value == value %}{{ label }}{% endif %}{% endfor %}
+            {% if not form.status.value %}<span class="text-[#BABAB0]">Select…</span>{% endif %}
+          </span>
+          <span class="ms text-lg text-[#BABAB0]">expand_more</span>
+        </button>
+
+        <div id="dropdown-list"
+             class="hidden absolute top-full left-0 right-0 mt-1 bg-[#FFFCF7] rounded-xl shadow-[0_4px_24px_rgba(56,56,49,0.10)] z-10 overflow-hidden">
+          {% for value, label in form.status.field.choices %}
+          <button type="button"
+                  data-value="{{ value }}"
+                  class="dropdown-option w-full text-left px-4 py-3 font-sans text-sm text-[#383831] hover:bg-[#F0EEE5] transition-colors duration-150
+                         {% if form.status.value == value %}bg-[#F0EEE5] font-medium{% endif %}">
+            {{ label }}
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if form.status.errors %}
+        <p class="font-sans text-xs text-red-400 mt-1">{{ form.status.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <label class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent font-medium block mb-2">
+        Any thoughts to share?
+      </label>
+      {{ form.note }}
+      {% if form.note.errors %}
+        <p class="font-sans text-xs text-red-400 mt-1">{{ form.note.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <button type="submit"
+            class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-xs py-4 rounded-2xl font-light tracking-normal">
+      {% if is_edit %}Update Reflection{% else %}Submit Reflection{% endif %}
+    </button>
+
+  </form>
+</div>
+
+<script>
+  const trigger = document.getElementById('dropdown-trigger');
+  const list = document.getElementById('dropdown-list');
+  const label = document.getElementById('dropdown-label');
+  const select = document.getElementById('id_status');
+
+  trigger.addEventListener('click', () => {
+    list.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('.dropdown-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const value = btn.dataset.value;
+      const text = btn.textContent.trim();
+      select.value = value;
+      label.innerHTML = text;
+      list.classList.add('hidden');
+      document.querySelectorAll('.dropdown-option').forEach(b => b.classList.remove('bg-[#F0EEE5]', 'font-medium'));
+      btn.classList.add('bg-[#F0EEE5]', 'font-medium');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('dropdown-wrapper').contains(e.target)) {
+      list.classList.add('hidden');
+    }
+  });
+</script>
+
+{% endblock %}

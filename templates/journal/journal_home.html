@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Journal{% endblock %}
+
+{% block content %}
+
+<div class="pt-5 pb-6 flex items-end justify-between">
+  <div>
+    <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent mb-2 font-medium">Personal</p>
+    <h1 class="text-2xl font-light text-ink">Journal</h1>
+  </div>
+  <a href="{% url 'journal:new_entry' %}"
+     class="gic-btn font-sans bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-[10px] px-4 py-3 rounded-lg font-light tracking-normal">New entry</a>
+</div>
+
+{% if journal_entries %}
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for entry in journal_entries %}
+    <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
+
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-sans text-[9px] tracking-widest uppercase font-medium text-accent">
+          {{ entry.get_entry_type_display }}
+        </span>
+        <span class="font-sans text-[10px] text-ink-light">{{ entry.created_at|date:"N j, Y" }}</span>
+      </div>
+
+      <p class="font-serif text-sm text-ink-mid leading-loose {% if entry.content|wordcount > 50 %}mb-6{% endif %}">{{ entry.content|truncatewords:50 }}</p>
+
+      {% if entry.content|wordcount > 50 %}
+      <a href="{% url 'journal:journal_detail' entry.pk %}"
+         class="font-sans text-xs text-accent tracking-wide">Read more →</a>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+
+  <div class="bg-app-card rounded-[2rem] p-10 text-center mt-2">
+    <p class="font-serif text-sm text-ink-light leading-loose mb-1">No entries yet.</p>
+    <p class="font-serif text-xs text-ink-light leading-loose">
+      Begin with whatever is on your heart.
+    </p>
+    <a href="{% url 'journal:new_entry' %}"
+       class="gic-btn font-sans inline-block mt-6 bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-xs px-8 py-3 rounded-full font-light tracking-normal">
+      Write your first entry
+    </a>
+  </div>
+
+{% endif %}
+
+{% endblock %}

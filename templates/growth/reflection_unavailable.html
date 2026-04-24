@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Reflection{% endblock %}
+
+{% block content %}
+
+<div class="pt-5 pb-6">
+  <a href="/" class="font-sans text-xs text-ink-light tracking-wide mb-4 inline-block">← Back</a>
+</div>
+
+<div class="bg-app-card-hi rounded-[2rem] p-10 md:max-w-xl">
+  <div class="w-12 h-12 rounded-2xl bg-ink/10 flex items-center justify-center mb-6">
+    <span class="ms text-2xl text-ink-light">self_improvement</span>
+  </div>
+
+  {% if reason == 'no_previous_week' %}
+    <h2 class="font-serif text-xl text-ink leading-snug mb-3">No previous week yet</h2>
+    <p class="font-serif text-sm text-ink-mid leading-loose">
+      The Midweek Reflection becomes available once your group has completed a full week together. Check back next week.
+    </p>
+  {% elif reason == 'no_takeaway' %}
+    <h2 class="font-serif text-xl text-ink leading-snug mb-3">No takeaway found</h2>
+    <p class="font-serif text-sm text-ink-mid leading-loose">
+      The Midweek Reflection is based on your takeaway from last week
+      {% if previous_week %}({{ previous_week.date_label }}){% endif %}.
+      Once you have added a takeaway for that week, you will be able to reflect here.
+    </p>
+  {% endif %}
+
+  <a href="/"
+     class="gic-btn font-sans inline-block mt-8 bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-xs px-8 py-3 rounded-full font-light tracking-normal">
+    Back to Today
+  </a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Announcements{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="From your community" title="Announcements" back_url="/" back_label="Back" %}
+
+{% if announcements %}
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for announcement in announcements %}
+    <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
+
+      <p class="font-sans text-[10px] tracking-widest uppercase text-ink-light mb-3">
+        {{ announcement.created_at|date:"N j, Y" }}
+      </p>
+
+      <h2 class="font-serif text-xl text-ink leading-snug mb-3">
+        {{ announcement.title }}
+      </h2>
+
+      <p class="font-serif text-sm text-ink-mid leading-loose">
+        {{ announcement.content }}
+      </p>
+
+    </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+
+  {% include "includes/empty_state.html" with message="No announcements have been shared yet." %}
+
+{% endif %}
+
+{% endblock %}

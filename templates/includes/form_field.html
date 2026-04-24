@@ -1,0 +1,9 @@
+<div>
+  {% if label %}
+    <label class="font-sans block text-[10px] tracking-[0.15em] uppercase text-accent mb-2 font-medium">{{ label }}</label>
+  {% endif %}
+  {{ field }}
+  {% if field.errors %}
+    <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ field.errors.0 }}</p>
+  {% endif %}
+</div>

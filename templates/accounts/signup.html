@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Create Account{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col items-center justify-center min-h-screen pt-0 pb-12 px-6">
+  <div class="w-full max-w-lg lg:max-w-lg">
+
+    <!-- Logo -->
+    <div class="flex flex-col items-center mb-8">
+      <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-24 w-24 object-contain rounded-full mb-6">
+      <p class="font-sans text-[10px] tracking-[0.2em] uppercase text-ink-light">Growing in Christ</p>
+    </div>
+
+    <!-- Heading -->
+    <div class="mb-8 text-center">
+      <h1 class="font-serif text-3xl text-ink leading-tight mb-3 whitespace-nowrap">Begin Your Journey</h1>
+      <p class="font-serif italic text-sm text-ink-light leading-relaxed">
+        "Create a space for your spiritual growth."
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form method="post" novalidate class="space-y-4">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="bg-red-50 rounded-xl px-4 py-3">
+          {% for error in form.non_field_errors %}
+            <p class="font-sans text-sm text-red-600">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div>
+        <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-ink-mid mb-1.5">Full Name</p>
+        {{ form.full_name }}
+        {% if form.full_name.errors %}
+          <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ form.full_name.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-ink-mid mb-1.5">Email Address</p>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ form.email.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-ink-mid mb-1.5">Password</p>
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+          <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ form.password1.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-ink-mid mb-1.5">Confirm Password</p>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+          <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ form.password2.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="pt-2">
+        <button type="submit"
+                class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white rounded-full py-4 text-sm font-light tracking-wide flex items-center justify-center gap-2">
+          Create Account <span class="text-base">→</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="text-center mt-10">
+      <p class="font-sans text-sm text-ink-light mb-1">Already walking with us?</p>
+      <a href="{% url 'accounts:login' %}" class="font-sans text-sm font-medium text-ink hover:text-accent transition-colors duration-200">Log in instead</a>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

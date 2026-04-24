@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col items-center justify-center min-h-screen pt-0 pb-12 px-6">
+  <div class="w-full max-w-lg lg:max-w-lg">
+
+    <!-- Logo -->
+    <div class="flex flex-col items-center mb-2">
+      <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-24 w-24 object-contain rounded-full mb-6">
+    </div>
+
+    <!-- Heading -->
+    <div class="text-center mb-8">
+      <h1 class="font-serif text-4xl text-ink leading-tight mb-3">Welcome Back,<br>Beloved</h1>
+      <p class="font-sans text-sm text-ink-light leading-relaxed">
+        Return to your quiet place of growth and reflection.
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form method="post" novalidate class="space-y-4">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="bg-red-50 rounded-xl px-4 py-3">
+          {% for error in form.non_field_errors %}
+            <p class="font-sans text-sm text-red-600">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div>
+        <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-ink-mid mb-1.5">Email Address</p>
+        {{ form.email }}
+        {% if form.email.errors %}
+          <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ form.email.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-ink-mid mb-1.5">Password</p>
+        {{ form.password }}
+        {% if form.password.errors %}
+          <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ form.password.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="pt-2">
+        <button type="submit"
+                class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white rounded-full py-4 text-sm font-light tracking-widest uppercase">
+          Login
+        </button>
+      </div>
+    </form>
+
+    <div class="text-center mt-10">
+      <p class="font-sans text-sm text-ink-light">
+        New to the journey?
+        <a href="{% url 'accounts:signup' %}" class="font-medium text-ink hover:text-accent transition-colors duration-200">Sign up instead</a>
+      </p>
+    </div>
+
+    <p class="font-serif italic text-xs text-ink-light text-center mt-16 leading-relaxed">
+      "But grow in the grace and knowledge of our Lord and Savior Jesus Christ."
+    </p>
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Saturday Takeaway{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="This Week" title="Saturday Takeaway" back_url="/" back_label="Back" %}
+
+<div class="md:max-w-xl">
+
+  {% if is_edit %}
+  <p class="font-serif text-sm text-ink-light italic mb-6">You can update your response below.</p>
+  {% endif %}
+
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+
+    <div>
+      <label class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent font-medium block mb-2">
+        Your action step
+      </label>
+      <p class="font-serif text-sm font-semibold text-ink leading-loose mb-3">
+        After reflecting on this week's study and discussion, what will you carry into the coming week?
+      </p>
+      {{ form.action_step }}
+      {% if form.action_step.errors %}
+        <p class="font-sans text-xs text-red-400 mt-1">{{ form.action_step.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    <button type="submit"
+            class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-xs py-4 rounded-2xl font-light tracking-normal">
+      {% if is_edit %}Update Takeaway{% else %}Submit Takeaway{% endif %}
+    </button>
+
+  </form>
+</div>
+
+{% endblock %}

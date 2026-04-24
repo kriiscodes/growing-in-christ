@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Today{% endblock %}
+
+{% block content %}
+
+<!-- Greeting -->
+<div class="pt-6 pb-8 flex items-start justify-between">
+  <div>
+    <p class="font-sans text-[9px] tracking-widest uppercase font-medium text-accent mb-3">{% now "l, F j" %}</p>
+    <h1 class="font-sans text-2xl md:text-4xl font-light text-ink leading-tight">
+      Welcome back, {{ request.user.full_name|truncatewords:1|cut:"…" }}
+    </h1>
+  </div>
+  <div class="hidden lg:flex w-9 h-9 rounded-full bg-ink items-center justify-center flex-shrink-0 mt-1">
+    <span class="font-sans text-[11px] font-medium text-app-bg uppercase">
+      {{ request.user.full_name|first|default:request.user.email|first }}
+    </span>
+  </div>
+</div>
+
+<div class="space-y-6">
+
+  <!-- Row 1: Weekly Word + Progress -->
+  <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6">
+
+    <!-- Weekly Word card — featured treatment -->
+    <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
+      <p class="font-sans text-[9px] tracking-widest uppercase text-accent mb-4 font-medium">Weekly Word</p>
+
+      {% if weekly_word %}
+        {% if weekly_word.scripture_references %}
+          <h2 class="font-serif text-2xl text-ink mb-4 leading-snug">{{ weekly_word.scripture_references }}</h2>
+        {% endif %}
+        <blockquote class="font-serif italic text-lg text-ink-mid leading-loose mb-6">
+          "{{ weekly_word.content|truncatewords:25 }}"
+        </blockquote>
+        <a href="{% url 'studies:weekly_word' %}"
+           class="gic-btn font-sans inline-block bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-xs px-8 py-3 rounded-full font-light tracking-normal">
+          Read Full Chapter
+        </a>
+      {% else %}
+        <p class="font-serif text-sm text-ink-light leading-loose">
+          No study has been shared for this week yet.
+        </p>
+      {% endif %}
+    </div>
+
+    <!-- Progress card -->
+    <div class="bg-app-card-hi rounded-[2rem] p-10">
+      <p class="font-sans text-[9px] tracking-widest uppercase text-accent mb-5 font-medium">Your Progress</p>
+
+      {% if active_week %}
+      <div class="space-y-4">
+
+        <!-- Check-in -->
+        <a href="{% url 'growth:checkin' %}" class="flex items-center gap-4 group">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200
+                      {% if checkin_done %}bg-ink{% else %}bg-app-muted group-hover:bg-ink/10{% endif %}">
+            <span class="text-xl {% if checkin_done %}ms-filled text-app-bg{% else %}ms text-accent{% endif %}">check_circle</span>
+          </div>
+          <div>
+            <p class="font-sans text-sm font-semibold text-ink leading-tight">Check-in</p>
+            <p class="font-sans text-xs mt-0.5 {% if checkin_done %}text-ink-light{% else %}text-accent{% endif %}">
+              {% if checkin_done %}Shared{% else %}Not yet{% endif %}
+            </p>
+          </div>
+        </a>
+
+        <!-- Takeaway -->
+        <a href="{% url 'growth:takeaway' %}" class="flex items-center gap-4 group">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200
+                      {% if takeaway_done %}bg-ink{% else %}bg-app-muted group-hover:bg-ink/10{% endif %}">
+            <span class="text-xl {% if takeaway_done %}ms-filled text-app-bg{% else %}ms text-accent{% endif %}">edit_note</span>
+          </div>
+          <div>
+            <p class="font-sans text-sm font-semibold text-ink leading-tight">Takeaway</p>
+            <p class="font-sans text-xs mt-0.5 {% if takeaway_done %}text-ink-light{% else %}text-accent{% endif %}">
+              {% if takeaway_done %}Added{% else %}Not yet{% endif %}
+            </p>
+          </div>
+        </a>
+
+        <!-- Reflection -->
+        <a href="{% url 'growth:midweek_reflection' %}" class="flex items-center gap-4 group">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-200
+                      {% if reflection_done %}bg-ink{% elif reflection_available %}bg-app-muted group-hover:bg-ink/10{% else %}bg-app-muted group-hover:bg-ink/10{% endif %}">
+            <span class="text-xl {% if reflection_done %}ms-filled text-app-bg{% else %}ms {% if reflection_available %}text-accent{% else %}text-ink-light{% endif %}{% endif %}">self_improvement</span>
+          </div>
+          <div>
+            <p class="font-sans text-sm font-semibold text-ink leading-tight">Reflection</p>
+            <p class="font-sans text-xs mt-0.5 {% if reflection_done %}text-ink-light{% elif reflection_available %}text-accent{% else %}text-ink-light{% endif %}">
+              {% if reflection_done %}Shared{% elif reflection_available %}Not yet{% else %}Not available yet{% endif %}
+            </p>
+          </div>
+        </a>
+
+      </div>
+      {% else %}
+      <p class="font-serif text-sm text-ink-light leading-loose">No active week.</p>
+      {% endif %}
+
+      <div class="border-t border-[#383831]/10 mt-6 pt-4">
+        <p class="font-serif text-xs text-accent italic">Consistency is the soil of growth.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Row 2: Prayer Focus + Gathering -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Prayer Focus card -->
+    <a href="{% url 'prayer:prayer_home' %}" class="bg-app-peach rounded-[2rem] p-10 block hover:brightness-[0.97] transition-all duration-200">
+      <div class="flex items-start gap-4">
+        <div class="w-16 h-16 rounded-2xl bg-white/60 flex items-center justify-center flex-shrink-0">
+          <span class="ms-filled text-3xl text-accent">favorite</span>
+        </div>
+        <div>
+          <p class="font-sans text-[9px] tracking-widest uppercase text-accent mb-2 font-medium">Prayer Focus</p>
+          {% if prayer_focus %}
+            <p class="font-serif text-lg text-ink-mid leading-loose">{{ prayer_focus.content }}</p>
+          {% else %}
+            <p class="font-serif text-sm text-ink-light leading-loose">No prayer focus set for this week.</p>
+          {% endif %}
+        </div>
+      </div>
+    </a>
+
+    <!-- Gathering card -->
+    <div class="bg-app-muted rounded-[2rem] p-10">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex-1">
+          <p class="font-sans text-[9px] tracking-widest uppercase text-accent mb-3 font-medium">Gathering</p>
+          {% if meeting_info %}
+            <p class="font-sans text-lg font-semibold text-ink leading-tight">
+              {{ meeting_info.meeting_time|date:"l, F j" }}
+            </p>
+            <p class="font-sans text-sm text-ink-mid mt-1">{{ meeting_info.meeting_time|date:"g:i A" }}</p>
+            {% if meeting_info.meeting_note %}
+              <div class="bg-white/40 mt-4 px-4 py-3 rounded-2xl">
+                <p class="font-serif text-sm text-ink-mid leading-loose italic">{{ meeting_info.meeting_note }}</p>
+              </div>
+            {% endif %}
+          {% else %}
+            <p class="font-serif text-sm text-ink-light leading-loose">No meeting scheduled this week.</p>
+          {% endif %}
+        </div>
+        <div class="w-12 h-16 rounded-xl bg-white/50 flex items-center justify-center flex-shrink-0">
+          <span class="ms text-3xl text-ink-mid">calendar_today</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Latest Announcement card -->
+  <div class="bg-app-card-hi rounded-[2rem] p-10">
+    <p class="font-sans text-[9px] tracking-widest uppercase text-accent mb-3 font-medium">Latest Announcement</p>
+    {% if latest_announcement %}
+      <h3 class="font-serif text-xl text-ink leading-snug mb-3">
+        {{ latest_announcement.title }}
+      </h3>
+      <p class="font-serif text-sm text-accent leading-loose mb-6">
+        {{ latest_announcement.content|truncatewords:30 }}
+      </p>
+      <a href="{% url 'announcements:announcement_list' %}"
+         class="font-sans border border-[#383831]/20 text-ink-mid text-[10px] px-6 py-2 rounded-full tracking-wider uppercase font-light inline-block hover:border-[#383831]/40 hover:text-ink transition-colors duration-200">
+        View All
+      </a>
+    {% else %}
+      <p class="font-serif text-sm text-ink-light leading-loose">
+        No announcements have been shared yet.
+      </p>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}

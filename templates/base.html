@@ -1,0 +1,240 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{% block title %}Growing in Christ{% endblock %}</title>
+
+  <link rel="preload" href="{% static 'fonts/material-symbols-rounded.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <script src="{% static 'js/tailwind.js' %}"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'app-bg':       '#FFFCF7',
+            'app-card':     '#FCF9F3',
+            'app-card-hi':  '#F0EEE5',
+            'app-peach':    '#FEF0E0',
+            'app-muted':    '#E2DED5',
+            'accent':    '#695D4A',
+            'ink':       '#383831',
+            'ink-mid':   '#6b6355',
+            'ink-light': '#BABAB0',
+          },
+          fontFamily: {
+            serif: ['Noto Serif', 'Georgia', 'serif'],
+            sans:  ['Noto Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+
+  <style>
+    html { font-family: 'Noto Serif', Georgia, serif; }
+    .ms { font-family: 'Material Symbols Rounded'; font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+    .ms-filled { font-family: 'Material Symbols Rounded'; font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0px 1000px #FCF9F3 inset;
+      -webkit-text-fill-color: #383831;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23BABAB0' stroke-width='1.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+    .gic-btn {
+      transition: filter 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .gic-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+    .gic-btn:active {
+      filter: brightness(0.96);
+      transform: translateY(0);
+    }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .page-enter {
+      animation: pageEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+
+  <!-- PWA -->
+  <link rel="manifest" href="{% url 'core:manifest' %}">
+  <meta name="theme-color" content="#695D4A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Growing in Christ">
+  <link rel="apple-touch-icon" href="{% static 'images/icon-192.png' %}">
+</head>
+<body class="bg-app-bg text-ink">
+
+  {% with view_name=request.resolver_match.url_name namespace=request.resolver_match.namespace %}
+
+  {% if request.user.is_authenticated %}
+
+  <!-- Top header (mobile/tablet only) -->
+  <div class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-[#FFFCF7]/80 backdrop-blur-xl shadow-[0_1px_24px_rgba(56,56,49,0.05)]">
+    <div class="flex items-center px-5 py-4">
+
+      <!-- Logo -->
+      <div class="flex-1 flex items-center">
+        <a href="{% url 'core:dashboard' %}">
+          <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-12 w-12 object-contain">
+        </a>
+      </div>
+
+      <!-- Title centered -->
+      <span class="font-serif italic text-accent text-lg tracking-wide">Growing in Christ</span>
+
+      <!-- Avatar -->
+      <div class="flex-1 flex items-center justify-end">
+        {% if request.user.is_authenticated %}
+        <div class="w-10 h-10 rounded-full bg-ink flex items-center justify-center">
+          <span class="font-sans text-[11px] font-medium text-app-bg uppercase">
+            {{ request.user.full_name|first|default:request.user.email|first }}
+          </span>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sidebar (desktop only) -->
+  <aside class="hidden lg:flex fixed left-3 top-3 bottom-3 w-[250px] flex-col z-20 bg-[#2a2922] rounded-[2rem]">
+
+    <a href="{% url 'core:dashboard' %}" class="pl-2 pr-1 pt-2 pb-2 flex items-center gap-0">
+      <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-14 w-14 object-contain flex-shrink-0">
+      <p class="font-serif italic text-[#c9b99a] text-sm tracking-wide whitespace-nowrap">Growing in Christ</p>
+    </a>
+
+    <nav class="flex-1 px-4 space-y-1">
+      <a href="{% url 'core:dashboard' %}"
+         class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200
+                {% if view_name == 'dashboard' %}bg-white/10 text-white{% else %}text-white/40 hover:text-white/70{% endif %}">
+        <span class="{% if view_name == 'dashboard' %}ms-filled{% else %}ms{% endif %} text-xl">auto_stories</span>
+        <span class="font-sans text-sm {% if view_name == 'dashboard' %}font-medium{% else %}font-normal{% endif %}">Today</span>
+      </a>
+
+      <a href="{% url 'studies:weekly_word' %}"
+         class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200
+                {% if view_name == 'weekly_word' %}bg-white/10 text-white{% else %}text-white/40 hover:text-white/70{% endif %}">
+        <span class="{% if view_name == 'weekly_word' %}ms-filled{% else %}ms{% endif %} text-xl">menu_book</span>
+        <span class="font-sans text-sm {% if view_name == 'weekly_word' %}font-medium{% else %}font-normal{% endif %}">Word</span>
+      </a>
+
+      <a href="{% url 'prayer:prayer_home' %}"
+         class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200
+                {% if namespace == 'prayer' %}bg-white/10 text-white{% else %}text-white/40 hover:text-white/70{% endif %}">
+        <span class="{% if namespace == 'prayer' %}ms-filled{% else %}ms{% endif %} text-xl">favorite</span>
+        <span class="font-sans text-sm {% if namespace == 'prayer' %}font-medium{% else %}font-normal{% endif %}">Prayer</span>
+      </a>
+
+      <a href="{% url 'journal:journal_home' %}"
+         class="flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200
+                {% if namespace == 'journal' %}bg-white/10 text-white{% else %}text-white/40 hover:text-white/70{% endif %}">
+        <span class="{% if namespace == 'journal' %}ms-filled{% else %}ms{% endif %} text-xl">edit_note</span>
+        <span class="font-sans text-sm {% if namespace == 'journal' %}font-medium{% else %}font-normal{% endif %}">Journal</span>
+      </a>
+    </nav>
+
+    {% if request.user.is_authenticated %}
+    <div class="px-7 py-6 border-t border-white/[0.08]">
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="flex items-center gap-3 px-4 py-2 rounded-2xl w-full text-left text-white/60 hover:text-white/90 hover:bg-white/5 transition-all duration-200">
+          <span class="ms text-xl">logout</span>
+          <span class="font-sans text-sm">Log out</span>
+        </button>
+      </form>
+    </div>
+    {% endif %}
+
+  </aside>
+
+  {% endif %}
+
+  <!-- Page content -->
+  <main class="page-enter {% if request.user.is_authenticated %}max-w-2xl md:max-w-4xl mx-auto px-6 pt-20 pb-32 lg:ml-[268px] lg:pt-2 lg:pb-12 lg:mx-0 lg:max-w-none lg:pr-10{% else %}w-full px-6 py-8{% endif %}">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% if request.user.is_authenticated %}
+  <!-- Bottom navigation (mobile/tablet only) -->
+  <div class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-[#FFFCF7]/90 backdrop-blur-xl shadow-[0_-1px_24px_rgba(56,56,49,0.06)]">
+    <nav class="flex" aria-label="Main navigation">
+
+      <a href="{% url 'core:dashboard' %}"
+         class="flex-1 flex flex-col items-center pt-2 pb-3 gap-0.5 transition-colors duration-300
+                {% if view_name == 'dashboard' %}text-ink{% else %}text-ink-light{% endif %}"
+         aria-label="Today">
+        <div class="{% if view_name == 'dashboard' %}bg-app-card rounded-xl px-3 py-1{% else %}px-3 py-1{% endif %}">
+          <span class="ms text-2xl">auto_stories</span>
+        </div>
+        <span class="font-sans text-[9px] tracking-widest uppercase font-medium">Today</span>
+      </a>
+
+      <a href="{% url 'studies:weekly_word' %}"
+         class="flex-1 flex flex-col items-center pt-2 pb-3 gap-0.5 transition-colors duration-300
+                {% if view_name == 'weekly_word' %}text-ink{% else %}text-ink-light{% endif %}"
+         aria-label="Word">
+        <div class="{% if view_name == 'weekly_word' %}bg-app-card rounded-xl px-3 py-1{% else %}px-3 py-1{% endif %}">
+          <span class="ms text-2xl">menu_book</span>
+        </div>
+        <span class="font-sans text-[9px] tracking-widest uppercase font-medium">Word</span>
+      </a>
+
+      <a href="{% url 'prayer:prayer_home' %}"
+         class="flex-1 flex flex-col items-center pt-2 pb-3 gap-0.5 transition-colors duration-300
+                {% if namespace == 'prayer' %}text-ink{% else %}text-ink-light{% endif %}"
+         aria-label="Prayer">
+        <div class="{% if namespace == 'prayer' %}bg-app-card rounded-xl px-3 py-1{% else %}px-3 py-1{% endif %}">
+          <span class="ms text-2xl">favorite</span>
+        </div>
+        <span class="font-sans text-[9px] tracking-widest uppercase font-medium">Prayer</span>
+      </a>
+
+      <a href="{% url 'journal:journal_home' %}"
+         class="flex-1 flex flex-col items-center pt-2 pb-3 gap-0.5 transition-colors duration-300
+                {% if namespace == 'journal' %}text-ink{% else %}text-ink-light{% endif %}"
+         aria-label="Journal">
+        <div class="{% if namespace == 'journal' %}bg-app-card rounded-xl px-3 py-1{% else %}px-3 py-1{% endif %}">
+          <span class="ms text-2xl">edit_note</span>
+        </div>
+        <span class="font-sans text-[9px] tracking-widest uppercase font-medium">Journal</span>
+      </a>
+
+    </nav>
+  </div>
+
+  {% endif %}
+
+  {% endwith %}
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/service-worker.js');
+      });
+    }
+  </script>
+
+</body>
+</html>

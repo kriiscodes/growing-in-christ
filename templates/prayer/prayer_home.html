@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Prayer{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="This Week" title="Prayer" %}
+
+<!-- Group Prayer Focus card -->
+<div class="bg-app-peach rounded-[2rem] p-10 mb-6">
+  <div class="flex items-start gap-4">
+    <div class="w-16 h-16 rounded-2xl bg-white/60 flex items-center justify-center flex-shrink-0">
+      <span class="ms-filled text-3xl text-accent">favorite</span>
+    </div>
+    <div>
+      <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent mb-2 font-bold">Group Prayer Focus</p>
+      {% if prayer_focus %}
+        <p class="font-serif text-lg text-ink-mid leading-loose">{{ prayer_focus.content }}</p>
+      {% else %}
+        <p class="font-serif text-sm text-ink-light leading-loose">No prayer focus set for this week.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Personal Prayer Journal section -->
+<div class="flex items-center justify-between mb-4 px-1">
+  <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent font-bold">My Prayers</p>
+  <a href="{% url 'prayer:new_prayer' %}"
+     class="gic-btn font-sans bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-[10px] px-4 py-3 rounded-lg font-light tracking-normal">
+    Add prayer
+  </a>
+</div>
+
+{% if prayer_entries %}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for entry in prayer_entries %}
+      <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
+
+        {% if entry.title %}
+          <p class="font-serif text-sm font-semibold text-ink mb-2 leading-tight">{{ entry.title }}</p>
+        {% endif %}
+
+        <p class="font-serif text-sm text-ink-mid leading-loose">{{ entry.content|truncatewords:30 }}</p>
+
+        <div class="flex items-center justify-between mt-5 gap-3">
+          <p class="font-sans text-[10px] text-ink-light">{{ entry.created_at|date:"N j, Y" }}</p>
+
+          {% if entry.is_answered %}
+            <span class="font-sans text-xs text-accent font-medium tracking-wide">
+              Answered{% if entry.answered_at %} · {{ entry.answered_at|date:"N j" }}{% endif %}
+            </span>
+          {% else %}
+            <form method="post" action="{% url 'prayer:mark_answered' entry.pk %}">
+              {% csrf_token %}
+              <button type="submit"
+                      class="font-sans text-xs text-ink-light tracking-wide hover:text-ink-mid transition-colors duration-300">
+                Mark as answered
+              </button>
+            </form>
+          {% endif %}
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  {% include "includes/empty_state.html" with message="Your prayers will appear here. Take a moment to write one." %}
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,13 @@
+<div class="pt-5 pb-6">
+  {% if back_url %}
+    <a href="{{ back_url }}"
+       class="font-sans text-xs text-ink-light tracking-wide mb-4 inline-block">← {{ back_label|default:"Back" }}</a>
+  {% endif %}
+  {% if eyebrow %}
+    <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent mb-2 font-medium">{{ eyebrow }}</p>
+  {% endif %}
+  <h1 class="text-2xl font-light text-ink">{{ title }}</h1>
+  {% if subtitle %}
+    <p class="text-sm text-ink-mid mt-1">{{ subtitle }}</p>
+  {% endif %}
+</div>

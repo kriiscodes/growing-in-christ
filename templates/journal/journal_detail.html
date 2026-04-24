@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Journal Entry{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Journal" title=entry.get_entry_type_display back_url="/journal/" back_label="Back" %}
+
+<div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
+  <p class="font-sans text-[10px] text-ink-light mb-6">{{ entry.created_at|date:"l, F j, Y" }}</p>
+  <div class="font-serif text-base text-ink-mid leading-loose [&>p]:mb-6 [&>p:last-child]:mb-0">
+    {{ entry.content|linebreaks }}
+  </div>
+</div>
+
+{% endblock %}

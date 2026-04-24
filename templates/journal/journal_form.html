@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}New Entry{% endblock %}
+
+{% block content %}
+
+{% url 'journal:journal_home' as journal_url %}
+{% include "includes/page_intro.html" with back_url=journal_url back_label="Journal" title="New Entry" subtitle="Write freely. This is only for you." %}
+
+<div class="md:max-w-xl">
+<div class="bg-app-card-hi rounded-[2rem] p-10">
+  <form method="post" novalidate class="space-y-5">
+    {% csrf_token %}
+
+    <!-- Entry type custom dropdown -->
+    <div>
+      <label class="font-sans block text-[10px] tracking-[0.15em] uppercase text-accent mb-2 font-medium">Entry type</label>
+
+      <!-- Hidden select for form submission -->
+      <select name="entry_type" id="id_entry_type" class="sr-only">
+        {% for value, label in form.entry_type.field.choices %}
+          <option value="{{ value }}" {% if form.entry_type.value == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Custom dropdown trigger -->
+      <div class="relative" id="dropdown-wrapper">
+        <button type="button" id="dropdown-trigger"
+                class="w-full bg-[#FFFCF7] rounded-xl px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:shadow-[0_0_0_3px_rgba(105,93,74,0.14)]">
+          <span id="dropdown-label" class="font-sans text-sm text-[#383831]">
+            {% for value, label in form.entry_type.field.choices %}{% if form.entry_type.value == value %}{{ label }}{% endif %}{% endfor %}
+            {% if not form.entry_type.value %}<span class="text-[#BABAB0]">Select a type…</span>{% endif %}
+          </span>
+          <span class="ms text-lg text-[#BABAB0]">expand_more</span>
+        </button>
+
+        <!-- Dropdown list -->
+        <div id="dropdown-list"
+             class="hidden absolute top-full left-0 right-0 mt-1 bg-[#FFFCF7] rounded-xl shadow-[0_4px_24px_rgba(56,56,49,0.10)] z-10 overflow-hidden">
+          {% for value, label in form.entry_type.field.choices %}
+          <button type="button"
+                  data-value="{{ value }}"
+                  class="dropdown-option w-full text-left px-4 py-3 font-sans text-sm text-[#383831] hover:bg-[#F0EEE5] transition-colors duration-150
+                         {% if form.entry_type.value == value %}bg-[#F0EEE5] font-medium{% endif %}">
+            {{ label }}
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+
+      {% if form.entry_type.errors %}
+        <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ form.entry_type.errors.0 }}</p>
+      {% endif %}
+    </div>
+
+    {% include "includes/form_field.html" with field=form.content label="Your entry" %}
+
+    {% if form.non_field_errors %}
+      <div class="bg-red-50 rounded-xl px-4 py-3">
+        {% for error in form.non_field_errors %}
+          <p class="font-sans text-sm text-red-600">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="pt-2">
+      <button type="submit"
+              class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white rounded-full py-4 text-xs tracking-normal font-light">
+        Save Entry
+      </button>
+    </div>
+  </form>
+</div>
+</div>
+
+<script>
+  const trigger = document.getElementById('dropdown-trigger');
+  const list = document.getElementById('dropdown-list');
+  const label = document.getElementById('dropdown-label');
+  const select = document.getElementById('id_entry_type');
+
+  trigger.addEventListener('click', () => {
+    list.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('.dropdown-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const value = btn.dataset.value;
+      const text = btn.textContent.trim();
+      select.value = value;
+      label.innerHTML = text;
+      list.classList.add('hidden');
+      document.querySelectorAll('.dropdown-option').forEach(b => b.classList.remove('bg-[#F0EEE5]', 'font-medium'));
+      btn.classList.add('bg-[#F0EEE5]', 'font-medium');
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('dropdown-wrapper').contains(e.target)) {
+      list.classList.add('hidden');
+    }
+  });
+</script>
+
+{% endblock %}

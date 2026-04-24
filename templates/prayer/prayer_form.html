@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}New Prayer{% endblock %}
+
+{% block content %}
+
+{% url 'prayer:prayer_home' as prayer_url %}
+{% include "includes/page_intro.html" with back_url=prayer_url back_label="Prayer" title="New Prayer" subtitle="Write what is on your heart." %}
+
+<div class="md:max-w-xl">
+<div class="bg-app-card-hi rounded-[2rem] p-10">
+  <form method="post" novalidate class="space-y-5">
+    {% csrf_token %}
+
+    {% include "includes/form_field.html" with field=form.title %}
+    {% include "includes/form_field.html" with field=form.content %}
+
+    {% if form.non_field_errors %}
+      <div class="bg-red-50 rounded-xl px-4 py-3">
+        {% for error in form.non_field_errors %}
+          <p class="font-sans text-sm text-red-600">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="pt-2">
+      <button type="submit"
+              class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white rounded-full py-4 text-xs tracking-normal font-light">
+        Save Prayer
+      </button>
+    </div>
+  </form>
+</div>
+</div>
+
+{% endblock %}

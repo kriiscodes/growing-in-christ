@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Journey Check-in{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="This Week" title="Journey Check-in" back_url="/" back_label="Back" %}
+
+<div class="md:max-w-xl">
+
+  {% if is_edit %}
+  <p class="font-serif text-sm text-ink-light italic mb-6">You can update your response below.</p>
+  {% endif %}
+
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+
+    {% if errors %}
+      <div class="bg-red-50 rounded-xl px-4 py-3 space-y-1">
+        {% for error in errors %}
+          <p class="font-sans text-sm text-red-600">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if boolean_question_context %}
+    <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-8 space-y-5">
+      {% for item in boolean_question_context %}
+        {% if not forloop.first %}
+        <div class="border-t border-[#383831]/10"></div>
+        {% endif %}
+        <label class="flex items-center justify-between gap-4 cursor-pointer">
+          <div>
+            <p class="font-sans text-sm font-semibold text-ink">{{ item.q.label }}</p>
+            {% if item.q.help_text %}
+              <p class="font-sans text-xs text-ink-mid mt-0.5">{{ item.q.help_text }}</p>
+            {% endif %}
+          </div>
+          <input type="checkbox" name="question_{{ item.q.id }}" id="q_{{ item.q.id }}"
+                 {% if item.checked %}checked{% endif %}
+                 class="sr-only peer">
+          <div class="w-11 h-6 rounded-full bg-app-muted peer-checked:bg-accent relative flex-shrink-0 transition-colors duration-200 after:absolute after:top-0.5 after:left-0.5 after:w-5 after:h-5 after:rounded-full after:bg-white after:transition-all after:duration-200 peer-checked:after:translate-x-5"></div>
+        </label>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% for item in text_question_context %}
+    <div>
+      <label for="q_{{ item.q.id }}" class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent font-medium block mb-2">
+        {{ item.q.label }}{% if item.q.is_required %} <span class="text-red-400">*</span>{% endif %}
+      </label>
+      {% if item.q.field_type == "short_text" %}
+        <input type="text" name="question_{{ item.q.id }}" id="q_{{ item.q.id }}"
+               value="{{ item.text_value }}"
+               {% if item.q.help_text %}placeholder="{{ item.q.help_text }}"{% endif %}
+               class="w-full bg-[#FFFCF7] rounded-xl px-4 py-3.5 text-[#383831] border border-[#383831]/15 focus:outline-none focus:shadow-[0_0_0_3px_rgba(105,93,74,0.14)] text-base">
+      {% else %}
+        <textarea name="question_{{ item.q.id }}" id="q_{{ item.q.id }}" rows="4"
+                  {% if item.q.help_text %}placeholder="{{ item.q.help_text }}"{% endif %}
+                  class="w-full bg-[#FFFCF7] rounded-xl px-4 py-3 text-[#383831] border border-[#383831]/15 focus:outline-none focus:shadow-[0_0_0_3px_rgba(105,93,74,0.14)] text-base resize-none">{{ item.text_value }}</textarea>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    {% if not boolean_question_context and not text_question_context %}
+    <div class="bg-app-card-hi rounded-[2rem] p-8">
+      <p class="font-serif text-sm text-ink-light leading-loose">No check-in questions have been set up yet.</p>
+    </div>
+    {% endif %}
+
+    <button type="submit"
+            class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-xs py-4 rounded-2xl font-light tracking-normal">
+      {% if is_edit %}Update Check-in{% else %}Submit Check-in{% endif %}
+    </button>
+
+  </form>
+</div>
+
+{% endblock %}
