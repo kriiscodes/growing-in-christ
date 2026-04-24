@@ -12,11 +12,12 @@
       Welcome back, {{ request.user.full_name|truncatewords:1|cut:"…" }}
     </h1>
   </div>
-  <div class="hidden lg:flex w-9 h-9 rounded-full bg-ink items-center justify-center flex-shrink-0 mt-1">
+  <a href="{% url 'accounts:profile' %}"
+     class="hidden lg:flex w-9 h-9 rounded-full bg-ink items-center justify-center flex-shrink-0 mt-1 ring-2 ring-accent/25 ring-offset-1 ring-offset-[#FFFCF7]">
     <span class="font-sans text-[11px] font-medium text-app-bg uppercase">
       {{ request.user.full_name|first|default:request.user.email|first }}
     </span>
-  </div>
+  </a>
 </div>
 
 <div class="space-y-6">

@@ -9,5 +9,4 @@ urlpatterns = [
     path('service-worker.js', views.service_worker, name='service_worker'),
     path('manifest.webmanifest', views.manifest, name='manifest'),
     path('offline/', views.offline, name='offline'),
-    path('create-admin/', views.create_admin, name='create_admin'),  # TEMPORARY — remove after first deploy
 ]

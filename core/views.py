@@ -77,12 +77,3 @@ def manifest(request):
 
 def offline(request):
     return render(request, 'pwa/offline.html')
-
-
-def create_admin(request):
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-    if User.objects.filter(is_superuser=True).exists():
-        return HttpResponse('Admin already exists.')
-    User.objects.create_superuser(email='emenikechristopher0@gmail.com', full_name='Admin User', password='admin1234')
-    return HttpResponse('Superuser created: emenikechristopher0@gmail.com / admin1234')

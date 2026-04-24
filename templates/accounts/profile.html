@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Account" title="Profile" back_url="/" back_label="Back" %}
+
+<div class="space-y-4 md:max-w-sm">
+
+  <!-- User info -->
+  <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
+    <div class="flex items-center gap-5 mb-6">
+      <div class="w-14 h-14 rounded-full bg-ink flex items-center justify-center flex-shrink-0">
+        <span class="font-sans text-lg font-medium text-app-bg uppercase">
+          {{ request.user.full_name|first|default:request.user.email|first }}
+        </span>
+      </div>
+      <div>
+        <p class="font-serif text-base text-ink leading-snug">{{ request.user.full_name }}</p>
+        <p class="font-sans text-xs text-ink-light mt-1">{{ request.user.email }}</p>
+      </div>
+    </div>
+
+    <div class="border-t border-[#383831]/10 pt-6">
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit"
+                class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white text-xs py-4 rounded-2xl font-light tracking-normal">
+          Sign out
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

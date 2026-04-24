@@ -106,11 +106,12 @@
       <!-- Avatar -->
       <div class="flex-1 flex items-center justify-end">
         {% if request.user.is_authenticated %}
-        <div class="w-10 h-10 rounded-full bg-ink flex items-center justify-center">
+        <a href="{% url 'accounts:profile' %}"
+           class="w-10 h-10 rounded-full bg-ink flex items-center justify-center ring-2 ring-accent/25 ring-offset-1 ring-offset-[#FFFCF7]">
           <span class="font-sans text-[11px] font-medium text-app-bg uppercase">
             {{ request.user.full_name|first|default:request.user.email|first }}
           </span>
-        </div>
+        </a>
         {% endif %}
       </div>
 
