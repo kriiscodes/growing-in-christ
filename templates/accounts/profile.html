@@ -8,6 +8,20 @@
 
 <div class="space-y-4 md:max-w-sm">
 
+  {% if request.user.is_leader %}
+  <a href="{% url 'core:leader_overview' %}"
+     class="bg-app-card-hi rounded-[2rem] p-6 flex items-center gap-4 hover:brightness-[0.97] transition-all duration-200 block">
+    <div class="w-11 h-11 rounded-2xl bg-ink/10 flex items-center justify-center flex-shrink-0">
+      <span class="ms text-2xl text-accent">group</span>
+    </div>
+    <div class="flex-1">
+      <p class="font-sans text-sm font-medium text-ink">Member Overview</p>
+      <p class="font-sans text-xs text-ink-light mt-0.5">See this week's participation</p>
+    </div>
+    <span class="ms text-xl text-ink-light">chevron_right</span>
+  </a>
+  {% endif %}
+
   <!-- User info -->
   <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
     <div class="flex items-center gap-5 mb-6">

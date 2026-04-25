@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Members{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Leader" title="Members" subtitle=active_week.date_label %}
+
+{% if member_data %}
+
+  <!-- Summary strip -->
+  <div class="grid grid-cols-3 gap-3 mb-6">
+    <div class="bg-app-card rounded-2xl px-4 py-4 text-center">
+      <p class="font-serif text-2xl text-ink font-light">{{ member_count }}</p>
+      <p class="font-sans text-[9px] tracking-widest uppercase text-ink-light mt-1">Members</p>
+    </div>
+    <div class="bg-app-card rounded-2xl px-4 py-4 text-center">
+      <p class="font-serif text-2xl text-ink font-light">{{ checkin_count }}</p>
+      <p class="font-sans text-[9px] tracking-widest uppercase text-ink-light mt-1">Checked in</p>
+    </div>
+    <div class="bg-app-card rounded-2xl px-4 py-4 text-center">
+      <p class="font-serif text-2xl text-ink font-light">{{ takeaway_count }}</p>
+      <p class="font-sans text-[9px] tracking-widest uppercase text-ink-light mt-1">Takeaways</p>
+    </div>
+  </div>
+
+  <!-- Member list -->
+  <div class="space-y-3">
+    {% for m in member_data %}
+    <a href="{% url 'core:leader_member_detail' m.user.pk %}"
+       class="bg-app-card-hi rounded-[2rem] p-5 md:p-7 flex items-center gap-4 hover:brightness-[0.97] transition-all duration-200 block">
+
+      <!-- Avatar -->
+      <div class="w-11 h-11 rounded-full bg-ink flex items-center justify-center flex-shrink-0">
+        <span class="font-sans text-xs font-medium text-app-bg uppercase">
+          {{ m.user.full_name|first|default:m.user.email|first }}
+        </span>
+      </div>
+
+      <!-- Name + email -->
+      <div class="flex-1 min-w-0">
+        <p class="font-sans text-sm font-medium text-ink truncate">{{ m.user.full_name }}</p>
+        <p class="font-sans text-[10px] text-ink-light mt-0.5 truncate">{{ m.user.email }}</p>
+      </div>
+
+      <!-- Status indicators -->
+      <div class="flex items-center gap-3 flex-shrink-0">
+        <div class="flex flex-col items-center gap-1">
+          <span class="{% if m.checkin %}ms-filled text-ink{% else %}ms text-ink-light{% endif %} text-xl">check_circle</span>
+          <span class="font-sans text-[8px] tracking-wide uppercase text-ink-light">Check-in</span>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="{% if m.takeaway %}ms-filled text-ink{% else %}ms text-ink-light{% endif %} text-xl">edit_note</span>
+          <span class="font-sans text-[8px] tracking-wide uppercase text-ink-light">Takeaway</span>
+        </div>
+        <div class="flex flex-col items-center gap-1">
+          <span class="{% if m.reflection %}ms-filled text-ink{% else %}ms text-ink-light{% endif %} text-xl">self_improvement</span>
+          <span class="font-sans text-[8px] tracking-wide uppercase text-ink-light">Reflect</span>
+        </div>
+      </div>
+
+    </a>
+    {% endfor %}
+  </div>
+
+{% else %}
+  {% include "includes/empty_state.html" with message="No members yet. Once people sign up, they will appear here." %}
+{% endif %}
+
+{% endblock %}

@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from django.views.decorators.cache import never_cache
 from django.template.loader import render_to_string
 
+from accounts.models import User
 from announcements.models import Announcement
 from growth.models import JourneyCheckIn, MidweekReflection, SaturdayTakeaway
 from .utils import get_active_week, get_previous_week
@@ -77,3 +78,80 @@ def manifest(request):
 
 def offline(request):
     return render(request, 'pwa/offline.html')
+
+
+@login_required
+def leader_overview(request):
+    if not request.user.is_leader:
+        return redirect('core:dashboard')
+
+    active_week = get_active_week()
+    previous_week = get_previous_week(active_week) if active_week else None
+
+    members = User.objects.filter(is_active=True).exclude(pk=request.user.pk).order_by('full_name')
+
+    member_data = []
+    for member in members:
+        checkin = None
+        takeaway = None
+        reflection = None
+
+        if active_week:
+            checkin = JourneyCheckIn.objects.filter(user=member, week=active_week).first()
+            takeaway = SaturdayTakeaway.objects.filter(user=member, week=active_week).first()
+
+        if previous_week:
+            reflection = MidweekReflection.objects.filter(user=member, week=previous_week).first()
+
+        member_data.append({
+            'user': member,
+            'checkin': checkin,
+            'takeaway': takeaway,
+            'reflection': reflection,
+        })
+
+    checkin_count  = sum(1 for m in member_data if m['checkin'])
+    takeaway_count = sum(1 for m in member_data if m['takeaway'])
+
+    return render(request, 'core/leader_overview.html', {
+        'active_week': active_week,
+        'previous_week': previous_week,
+        'member_data': member_data,
+        'member_count': len(member_data),
+        'checkin_count': checkin_count,
+        'takeaway_count': takeaway_count,
+    })
+
+
+@login_required
+def leader_member_detail(request, user_id):
+    if not request.user.is_leader:
+        return redirect('core:dashboard')
+
+    member = get_object_or_404(User, pk=user_id, is_active=True)
+    active_week = get_active_week()
+    previous_week = get_previous_week(active_week) if active_week else None
+
+    checkin = None
+    checkin_answers = []
+    takeaway = None
+    reflection = None
+
+    if active_week:
+        checkin = JourneyCheckIn.objects.filter(user=member, week=active_week).first()
+        if checkin:
+            checkin_answers = checkin.answers.select_related('question').order_by('question__sort_order')
+        takeaway = SaturdayTakeaway.objects.filter(user=member, week=active_week).first()
+
+    if previous_week:
+        reflection = MidweekReflection.objects.filter(user=member, week=previous_week).first()
+
+    return render(request, 'core/leader_member_detail.html', {
+        'member': member,
+        'active_week': active_week,
+        'previous_week': previous_week,
+        'checkin': checkin,
+        'checkin_answers': checkin_answers,
+        'takeaway': takeaway,
+        'reflection': reflection,
+    })

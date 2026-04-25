@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}{{ member.full_name }}{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Members" title=member.full_name back_url="/overview/" back_label="Members" %}
+
+<div class="space-y-5">
+
+  <!-- Check-in -->
+  <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-6 md:p-10">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="{% if checkin %}ms-filled text-ink{% else %}ms text-ink-light{% endif %} text-2xl">check_circle</span>
+      <p class="font-sans text-[10px] tracking-widest uppercase font-medium {% if checkin %}text-accent{% else %}text-ink-light{% endif %}">Journey Check-in</p>
+    </div>
+
+    {% if checkin %}
+      {% if checkin_answers %}
+        <div class="space-y-5">
+          {% for answer in checkin_answers %}
+          <div>
+            <p class="font-sans text-xs text-ink-mid mb-1.5 font-medium">{{ answer.question.label }}</p>
+            {% if answer.question.field_type == 'boolean' %}
+              <p class="font-serif text-sm text-ink leading-loose">
+                {% if answer.boolean_answer %}Yes{% else %}No{% endif %}
+              </p>
+            {% else %}
+              <p class="font-serif text-sm text-ink-mid leading-loose">
+                {% if answer.text_answer %}{{ answer.text_answer }}{% else %}<span class="text-ink-light italic">No answer given</span>{% endif %}
+              </p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="font-serif text-sm text-ink-light leading-loose italic">Submitted with no answers.</p>
+      {% endif %}
+    {% else %}
+      <p class="font-serif text-sm text-ink-light leading-loose italic">
+        {% if active_week %}Not submitted yet this week.{% else %}No active week.{% endif %}
+      </p>
+    {% endif %}
+  </div>
+
+  <!-- Takeaway -->
+  <div class="bg-app-card-hi rounded-[2rem] p-6 md:p-10">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="{% if takeaway %}ms-filled text-ink{% else %}ms text-ink-light{% endif %} text-2xl">edit_note</span>
+      <p class="font-sans text-[10px] tracking-widest uppercase font-medium {% if takeaway %}text-accent{% else %}text-ink-light{% endif %}">Saturday Takeaway</p>
+    </div>
+
+    {% if takeaway %}
+      <p class="font-serif text-sm text-ink-mid leading-loose">{{ takeaway.action_step }}</p>
+    {% else %}
+      <p class="font-serif text-sm text-ink-light leading-loose italic">
+        {% if active_week %}Not submitted yet this week.{% else %}No active week.{% endif %}
+      </p>
+    {% endif %}
+  </div>
+
+  <!-- Midweek Reflection -->
+  <div class="bg-app-peach rounded-[2rem] p-6 md:p-10">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="{% if reflection %}ms-filled text-ink{% else %}ms text-ink-light{% endif %} text-2xl">self_improvement</span>
+      <p class="font-sans text-[10px] tracking-widest uppercase font-medium {% if reflection %}text-accent{% else %}text-ink-light{% endif %}">
+        Midweek Reflection{% if previous_week %} · {{ previous_week.date_label }}{% endif %}
+      </p>
+    </div>
+
+    {% if reflection %}
+      <div class="mb-4">
+        <span class="font-sans text-[10px] tracking-widest uppercase text-accent font-medium">
+          {{ reflection.get_status_display }}
+        </span>
+      </div>
+      {% if reflection.note %}
+        <p class="font-serif text-sm text-ink-mid leading-loose">{{ reflection.note }}</p>
+      {% else %}
+        <p class="font-serif text-sm text-ink-light leading-loose italic">No note added.</p>
+      {% endif %}
+    {% else %}
+      <p class="font-serif text-sm text-ink-light leading-loose italic">
+        {% if previous_week %}Not submitted yet.{% else %}No previous week available.{% endif %}
+      </p>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}
