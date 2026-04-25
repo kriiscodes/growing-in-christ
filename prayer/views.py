@@ -14,11 +14,13 @@ def prayer_home(request):
         prayer_focus = getattr(active_week, 'prayer_focus', None)
 
     prayer_entries = PrayerEntry.objects.filter(user=request.user)
+    answered_count = prayer_entries.filter(is_answered=True).count()
 
     context = {
         'active_week': active_week,
         'prayer_focus': prayer_focus,
         'prayer_entries': prayer_entries,
+        'answered_count': answered_count,
     }
     return render(request, 'prayer/prayer_home.html', context)
 

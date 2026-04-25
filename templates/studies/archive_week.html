@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ weekly_word.scripture_references|default:"Past Week" }}{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Past Weeks" title="Weekly Word" subtitle=week.date_label back_url="/archive/" back_label="Past Weeks" %}
+
+<div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-5 md:p-10 mb-6">
+
+  {% if weekly_word.scripture_references %}
+    <h2 class="font-serif text-2xl text-ink leading-snug mb-6">{{ weekly_word.scripture_references }}</h2>
+  {% endif %}
+
+  <div class="font-serif text-base text-ink-mid leading-loose [&>p]:mb-6 [&>p:last-child]:mb-0">
+    {{ weekly_word.content|linebreaks }}
+  </div>
+
+</div>
+
+{% if resources %}
+  <div class="mb-6">
+    <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-accent mb-3 font-medium px-1">
+      Study Resources
+    </p>
+    <div class="space-y-2">
+      {% for resource in resources %}
+        <div class="bg-app-card rounded-xl px-5 py-4 flex items-center justify-between gap-3">
+          <p class="font-serif text-sm font-medium text-ink">{{ resource.title }}</p>
+          {% if resource.external_link %}
+            <a href="{{ resource.external_link }}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="font-sans text-xs text-accent tracking-wide flex-shrink-0">Open →</a>
+          {% elif resource.file %}
+            <a href="{{ resource.file.url }}"
+               class="font-sans text-xs text-accent tracking-wide flex-shrink-0">Download →</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% endblock %}

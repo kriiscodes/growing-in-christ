@@ -6,7 +6,8 @@
 
 {% url 'prayer:prayer_home' as prayer_url %}
 {% if is_edit %}
-  {% include "includes/page_intro.html" with back_url=prayer_url back_label="Prayer" title="Edit Prayer" %}
+  {% url 'prayer:prayer_detail' entry.pk as detail_url %}
+  {% include "includes/page_intro.html" with back_url=detail_url back_label="Back" title="Edit Prayer" %}
 {% else %}
   {% include "includes/page_intro.html" with back_url=prayer_url back_label="Prayer" title="New Prayer" subtitle="Write what is on your heart." %}
 {% endif %}

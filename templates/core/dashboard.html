@@ -101,8 +101,12 @@
       <p class="font-serif text-sm text-ink-light leading-loose">No active week.</p>
       {% endif %}
 
-      <div class="border-t border-[#383831]/10 mt-6 pt-4">
+      <div class="border-t border-[#383831]/10 mt-6 pt-4 flex items-center justify-between">
         <p class="font-serif text-xs text-accent italic">Consistency is the soil of growth.</p>
+        <a href="{% url 'growth:growth_history' %}"
+           class="font-sans text-[10px] text-ink-mid hover:text-ink transition-colors duration-200 tracking-wide">
+          History →
+        </a>
       </div>
     </div>
 

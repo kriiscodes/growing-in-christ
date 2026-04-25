@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Past Weeks{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Word" title="Past Weeks" back_url="/weekly-word/" back_label="This Week" %}
+
+{% if past_weeks %}
+  <div class="space-y-3">
+    {% for week in past_weeks %}
+    <a href="{% url 'studies:archive_week' week.pk %}"
+       class="bg-app-card-hi rounded-[2rem] p-6 md:p-8 flex items-center gap-4 hover:brightness-[0.97] transition-all duration-200 block">
+      <div class="flex-1 min-w-0">
+        <p class="font-sans text-[10px] tracking-widest uppercase text-accent font-medium mb-1">{{ week.date_label }}</p>
+        {% if week.weekly_word.scripture_references %}
+          <p class="font-serif text-base text-ink leading-snug">{{ week.weekly_word.scripture_references }}</p>
+        {% else %}
+          <p class="font-serif text-base text-ink-mid leading-snug italic">No scripture reference</p>
+        {% endif %}
+      </div>
+      <span class="ms text-xl text-ink-light flex-shrink-0">chevron_right</span>
+    </a>
+    {% endfor %}
+  </div>
+{% else %}
+  {% include "includes/empty_state.html" with message="No past weeks yet. Previous weeks will appear here once they pass." %}
+{% endif %}
+
+{% endblock %}

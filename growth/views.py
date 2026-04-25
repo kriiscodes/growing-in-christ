@@ -8,6 +8,34 @@ from .models import CheckInAnswer, CheckInQuestion, JourneyCheckIn, MidweekRefle
 
 
 @login_required
+def growth_history(request):
+    takeaways = (
+        SaturdayTakeaway.objects
+        .filter(user=request.user)
+        .select_related('week')
+        .order_by('-week__start_date')
+    )
+    reflections = (
+        MidweekReflection.objects
+        .filter(user=request.user)
+        .select_related('week')
+        .order_by('-week__start_date')
+    )
+
+    weeks_map = {}
+    for t in takeaways:
+        weeks_map.setdefault(t.week.pk, {'week': t.week, 'takeaway': None, 'reflection': None})
+        weeks_map[t.week.pk]['takeaway'] = t
+    for r in reflections:
+        weeks_map.setdefault(r.week.pk, {'week': r.week, 'takeaway': None, 'reflection': None})
+        weeks_map[r.week.pk]['reflection'] = r
+
+    history = sorted(weeks_map.values(), key=lambda x: x['week'].start_date, reverse=True)
+
+    return render(request, 'growth/history.html', {'history': history})
+
+
+@login_required
 def checkin(request):
     active_week = get_active_week()
     if not active_week:

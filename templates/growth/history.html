@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Growth History{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Personal" title="Growth History" back_url="/" back_label="Back" %}
+
+{% if history %}
+  <div class="space-y-4">
+    {% for item in history %}
+    <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-6 md:p-10">
+
+      <p class="font-sans text-[10px] tracking-widest uppercase text-accent font-medium mb-5">{{ item.week.date_label }}</p>
+
+      <div class="space-y-5">
+
+        {% if item.takeaway %}
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="ms-filled text-base text-ink">edit_note</span>
+            <p class="font-sans text-[10px] tracking-widest uppercase text-ink-mid font-medium">Takeaway</p>
+          </div>
+          <p class="font-serif text-sm text-ink-mid leading-loose">{{ item.takeaway.action_step }}</p>
+        </div>
+        {% endif %}
+
+        {% if item.takeaway and item.reflection %}
+        <div class="border-t border-[#383831]/8"></div>
+        {% endif %}
+
+        {% if item.reflection %}
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="ms-filled text-base text-ink">self_improvement</span>
+            <p class="font-sans text-[10px] tracking-widest uppercase text-ink-mid font-medium">Reflection</p>
+            <span class="font-sans text-[9px] tracking-wide text-accent ml-1">{{ item.reflection.get_status_display }}</span>
+          </div>
+          {% if item.reflection.note %}
+            <p class="font-serif text-sm text-ink-mid leading-loose">{{ item.reflection.note }}</p>
+          {% else %}
+            <p class="font-serif text-xs text-ink-light italic leading-loose">No note added.</p>
+          {% endif %}
+        </div>
+        {% endif %}
+
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  {% include "includes/empty_state.html" with message="Your growth history will appear here as you complete takeaways and reflections each week." %}
+{% endif %}
+
+{% endblock %}
