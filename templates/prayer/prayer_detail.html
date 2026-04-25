@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Prayer{% endblock %}
+
+{% block content %}
+
+{% include "includes/page_intro.html" with eyebrow="Prayer" title=entry.title|default:"Prayer Entry" back_url="/prayer/" back_label="Back" %}
+
+<div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-5 md:p-10">
+  <p class="font-sans text-xs text-ink-mid mb-6">{{ entry.created_at|date:"l, F j, Y" }}</p>
+
+  {% if entry.is_answered %}
+    <span class="font-sans text-[10px] tracking-widest uppercase text-accent font-medium inline-block mb-5">
+      Answered{% if entry.answered_at %} · {{ entry.answered_at|date:"N j, Y" }}{% endif %}
+    </span>
+  {% endif %}
+
+  <div class="font-serif text-base text-ink-mid leading-loose [&>p]:mb-6 [&>p:last-child]:mb-0">
+    {{ entry.content|linebreaks }}
+  </div>
+</div>
+
+<div class="flex items-center gap-5 mt-5 px-1">
+  <a href="{% url 'prayer:edit_prayer' entry.pk %}"
+     class="flex items-center gap-1.5 font-sans text-xs text-ink-light hover:text-ink transition-colors duration-200">
+    <span class="ms text-base">edit</span>
+    Edit
+  </a>
+  <button data-delete-url="{% url 'prayer:delete_prayer' entry.pk %}"
+          class="flex items-center gap-1.5 font-sans text-xs text-ink-light hover:text-ink transition-colors duration-200">
+    <span class="ms text-base">delete</span>
+    Delete
+  </button>
+  {% if not entry.is_answered %}
+    <form method="post" action="{% url 'prayer:mark_answered' entry.pk %}" class="ml-auto">
+      {% csrf_token %}
+      <button type="submit"
+              class="font-sans text-xs text-ink-light tracking-wide hover:text-ink-mid transition-colors duration-300">
+        Mark as answered
+      </button>
+    </form>
+  {% endif %}
+</div>
+
+{% endblock %}

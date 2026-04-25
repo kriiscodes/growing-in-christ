@@ -6,47 +6,43 @@
 
 {% include "includes/page_intro.html" with eyebrow="Leader" title="Members" subtitle=active_week.date_label %}
 
+<!-- Summary strip — always visible, tap to filter -->
+<div class="grid grid-cols-3 gap-3 mb-6">
+  <a href="{% url 'core:leader_overview' %}"
+     class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if not active_filter %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
+    <p class="font-serif text-2xl font-light">{{ member_count }}</p>
+    <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if not active_filter %}text-app-bg/60{% else %}text-ink-light{% endif %}">All</p>
+  </a>
+  <a href="{% url 'core:leader_overview' %}?filter=checkin"
+     class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if active_filter == 'checkin' %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
+    <p class="font-serif text-2xl font-light">{{ checkin_count }}</p>
+    <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if active_filter == 'checkin' %}text-app-bg/60{% else %}text-ink-light{% endif %}">Checked in</p>
+  </a>
+  <a href="{% url 'core:leader_overview' %}?filter=takeaway"
+     class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if active_filter == 'takeaway' %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
+    <p class="font-serif text-2xl font-light">{{ takeaway_count }}</p>
+    <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if active_filter == 'takeaway' %}text-app-bg/60{% else %}text-ink-light{% endif %}">Takeaways</p>
+  </a>
+</div>
+
+<!-- Member list -->
 {% if member_data %}
-
-  <!-- Summary strip — tap to filter -->
-  <div class="grid grid-cols-3 gap-3 mb-6">
-    <a href="{% url 'core:leader_overview' %}"
-       class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if not active_filter %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
-      <p class="font-serif text-2xl font-light">{{ member_count }}</p>
-      <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if not active_filter %}text-app-bg/60{% else %}text-ink-light{% endif %}">All</p>
-    </a>
-    <a href="{% url 'core:leader_overview' %}?filter=checkin"
-       class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if active_filter == 'checkin' %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
-      <p class="font-serif text-2xl font-light">{{ checkin_count }}</p>
-      <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if active_filter == 'checkin' %}text-app-bg/60{% else %}text-ink-light{% endif %}">Checked in</p>
-    </a>
-    <a href="{% url 'core:leader_overview' %}?filter=takeaway"
-       class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if active_filter == 'takeaway' %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
-      <p class="font-serif text-2xl font-light">{{ takeaway_count }}</p>
-      <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if active_filter == 'takeaway' %}text-app-bg/60{% else %}text-ink-light{% endif %}">Takeaways</p>
-    </a>
-  </div>
-
-  <!-- Member list -->
   <div class="space-y-3">
     {% for m in member_data %}
-    <a href="{% url 'core:leader_member_detail' m.user.pk %}"
+    <a href="{% url 'core:leader_member_detail' m.user.pk %}{% if active_filter %}?from_filter={{ active_filter }}{% endif %}"
        class="bg-app-card-hi rounded-[2rem] p-5 md:p-7 flex items-center gap-4 hover:brightness-[0.97] transition-all duration-200 block">
 
-      <!-- Avatar -->
       <div class="w-11 h-11 rounded-full bg-ink flex items-center justify-center flex-shrink-0">
         <span class="font-sans text-xs font-medium text-app-bg uppercase">
           {{ m.user.full_name|first|default:m.user.email|first }}
         </span>
       </div>
 
-      <!-- Name + email -->
       <div class="flex-1 min-w-0">
         <p class="font-sans text-sm font-medium text-ink truncate">{{ m.user.full_name }}</p>
         <p class="font-sans text-[10px] text-ink-light mt-0.5 truncate">{{ m.user.email }}</p>
       </div>
 
-      <!-- Status indicators -->
       <div class="flex items-center gap-3 flex-shrink-0">
         <div class="flex flex-col items-center gap-1">
           <span class="{% if m.checkin %}ms-filled text-ink{% else %}ms text-ink-light{% endif %} text-xl">check_circle</span>
@@ -65,7 +61,6 @@
     </a>
     {% endfor %}
   </div>
-
 {% else %}
   {% include "includes/empty_state.html" with message="No members yet. Once people sign up, they will appear here." %}
 {% endif %}

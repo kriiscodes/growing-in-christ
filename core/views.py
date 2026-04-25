@@ -136,6 +136,13 @@ def leader_member_detail(request, user_id):
         return redirect('core:dashboard')
 
     member = get_object_or_404(User, pk=user_id, is_active=True)
+
+    from_filter = request.GET.get('from_filter', '')
+    if from_filter in ('checkin', 'takeaway'):
+        back_url = f'/overview/?filter={from_filter}'
+    else:
+        back_url = '/overview/'
+
     active_week = get_active_week()
     previous_week = get_previous_week(active_week) if active_week else None
 
@@ -161,4 +168,5 @@ def leader_member_detail(request, user_id):
         'checkin_answers': checkin_answers,
         'takeaway': takeaway,
         'reflection': reflection,
+        'back_url': back_url,
     })

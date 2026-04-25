@@ -24,6 +24,12 @@ def prayer_home(request):
 
 
 @login_required
+def prayer_detail(request, pk):
+    entry = get_object_or_404(PrayerEntry, pk=pk, user=request.user)
+    return render(request, 'prayer/prayer_detail.html', {'entry': entry})
+
+
+@login_required
 def new_prayer(request):
     form = PrayerEntryForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -41,7 +47,7 @@ def edit_prayer(request, pk):
     form = PrayerEntryForm(request.POST or None, instance=entry)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        return redirect('prayer:prayer_home')
+        return redirect('prayer:prayer_detail', pk=entry.pk)
     return render(request, 'prayer/prayer_form.html', {'form': form, 'is_edit': True, 'entry': entry})
 
 
@@ -64,4 +70,4 @@ def mark_answered(request, pk):
         entry.is_answered = True
         entry.save()
 
-    return redirect('prayer:prayer_home')
+    return redirect('prayer:prayer_detail', pk=entry.pk)
