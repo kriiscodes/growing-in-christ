@@ -6,11 +6,24 @@
 
 {% include "includes/page_intro.html" with eyebrow="Journal" title=entry.get_entry_type_display back_url="/journal/" back_label="Back" %}
 
-<div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
-  <p class="font-sans text-[10px] text-ink-light mb-6">{{ entry.created_at|date:"l, F j, Y" }}</p>
+<div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-5 md:p-10">
+  <p class="font-sans text-xs text-ink-mid mb-6">{{ entry.created_at|date:"l, F j, Y" }}</p>
   <div class="font-serif text-base text-ink-mid leading-loose [&>p]:mb-6 [&>p:last-child]:mb-0">
     {{ entry.content|linebreaks }}
   </div>
+</div>
+
+<div class="flex items-center gap-5 mt-5 px-1">
+  <a href="{% url 'journal:edit_entry' entry.pk %}"
+     class="flex items-center gap-1.5 font-sans text-xs text-ink-light hover:text-ink transition-colors duration-200">
+    <span class="ms text-base">edit</span>
+    Edit
+  </a>
+  <button data-delete-url="{% url 'journal:delete_entry' entry.pk %}"
+          class="flex items-center gap-1.5 font-sans text-xs text-ink-light hover:text-ink transition-colors duration-200">
+    <span class="ms text-base">delete</span>
+    Delete
+  </button>
 </div>
 
 {% endblock %}

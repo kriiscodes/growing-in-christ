@@ -23,7 +23,17 @@
         <span class="font-sans text-[9px] tracking-widest uppercase font-medium text-accent">
           {{ entry.get_entry_type_display }}
         </span>
-        <span class="font-sans text-[10px] text-ink-light">{{ entry.created_at|date:"N j, Y" }}</span>
+        <div class="flex items-center gap-3">
+          <span class="font-sans text-xs text-ink-mid">{{ entry.created_at|date:"N j, Y" }}</span>
+          <a href="{% url 'journal:edit_entry' entry.pk %}"
+             class="text-ink-light hover:text-ink transition-colors duration-200">
+            <span class="ms text-lg">edit</span>
+          </a>
+          <button data-delete-url="{% url 'journal:delete_entry' entry.pk %}"
+                  class="text-ink-light hover:text-ink transition-colors duration-200">
+            <span class="ms text-lg">delete</span>
+          </button>
+        </div>
       </div>
 
       <p class="font-serif text-sm text-ink-mid leading-loose {% if entry.content|wordcount > 50 %}mb-6{% endif %}">{{ entry.content|truncatewords:50 }}</p>

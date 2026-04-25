@@ -5,7 +5,11 @@
 {% block content %}
 
 {% url 'journal:journal_home' as journal_url %}
-{% include "includes/page_intro.html" with back_url=journal_url back_label="Journal" title="New Entry" subtitle="Write freely. This is only for you." %}
+{% if is_edit %}
+  {% include "includes/page_intro.html" with back_url=journal_url back_label="Journal" title="Edit Entry" %}
+{% else %}
+  {% include "includes/page_intro.html" with back_url=journal_url back_label="Journal" title="New Entry" subtitle="Write freely. This is only for you." %}
+{% endif %}
 
 <div class="md:max-w-xl">
 <div class="bg-app-card-hi rounded-[2rem] p-10">
@@ -66,7 +70,7 @@
     <div class="pt-2">
       <button type="submit"
               class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white rounded-full py-4 text-xs tracking-normal font-light">
-        Save Entry
+        {% if is_edit %}Update Entry{% else %}Save Entry{% endif %}
       </button>
     </div>
   </form>

@@ -229,12 +229,85 @@
 
   {% endwith %}
 
+  <!-- Delete confirmation modal -->
+  <div id="delete-modal"
+       class="fixed inset-0 z-50 flex items-center justify-center px-6 pointer-events-none"
+       style="opacity: 0; transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+    <div id="delete-modal-backdrop"
+         class="absolute inset-0 bg-[#383831]/30 backdrop-blur-sm"></div>
+    <div class="relative bg-[#FFFCF7] rounded-[2rem] p-8 w-full max-w-sm shadow-[0_8px_40px_rgba(56,56,49,0.12)]"
+         style="transform: translateY(12px); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);"
+         id="delete-modal-card">
+      <p class="font-sans text-[9px] tracking-widest uppercase text-accent font-medium mb-3">Confirm</p>
+      <h2 class="font-serif text-xl text-ink leading-snug mb-2">Are you sure?</h2>
+      <p class="font-serif text-sm text-ink-light leading-loose mb-8">This will permanently delete this entry. It cannot be undone.</p>
+      <div class="flex gap-3">
+        <button id="delete-cancel"
+                class="flex-1 font-sans text-xs text-ink-mid border border-[#383831]/15 py-3.5 rounded-2xl hover:border-[#383831]/30 transition-colors duration-200">
+          Cancel
+        </button>
+        <form id="delete-form" method="post" class="flex-1">
+          {% csrf_token %}
+          <button type="submit"
+                  class="gic-btn w-full font-sans text-xs text-white bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] py-3.5 rounded-2xl font-light">
+            Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offline banner -->
+  <div id="offline-banner"
+       class="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none"
+       style="transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);">
+    <div class="mt-4 bg-[#383831] text-[#FFFCF7] font-sans text-[11px] tracking-wide px-5 py-2.5 rounded-full shadow-md pointer-events-auto">
+      You're offline
+    </div>
+  </div>
+
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('/service-worker.js');
       });
     }
+
+    (function () {
+      var banner = document.getElementById('offline-banner');
+      function showBanner() { banner.style.transform = 'translateY(0)'; }
+      function hideBanner() { banner.style.transform = 'translateY(-100%)'; }
+      window.addEventListener('offline', showBanner);
+      window.addEventListener('online', hideBanner);
+      if (!navigator.onLine) showBanner();
+    })();
+
+    (function () {
+      var modal = document.getElementById('delete-modal');
+      var card  = document.getElementById('delete-modal-card');
+      var form  = document.getElementById('delete-form');
+
+      function openModal(url) {
+        form.action = url;
+        modal.style.opacity = '1';
+        modal.style.pointerEvents = 'auto';
+        card.style.transform = 'translateY(0)';
+      }
+
+      function closeModal() {
+        modal.style.opacity = '0';
+        modal.style.pointerEvents = 'none';
+        card.style.transform = 'translateY(12px)';
+      }
+
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-delete-url]');
+        if (btn) { e.preventDefault(); openModal(btn.dataset.deleteUrl); }
+      });
+
+      document.getElementById('delete-cancel').addEventListener('click', closeModal);
+      document.getElementById('delete-modal-backdrop').addEventListener('click', closeModal);
+    })();
   </script>
 
 </body>

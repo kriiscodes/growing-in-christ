@@ -5,7 +5,11 @@
 {% block content %}
 
 {% url 'prayer:prayer_home' as prayer_url %}
-{% include "includes/page_intro.html" with back_url=prayer_url back_label="Prayer" title="New Prayer" subtitle="Write what is on your heart." %}
+{% if is_edit %}
+  {% include "includes/page_intro.html" with back_url=prayer_url back_label="Prayer" title="Edit Prayer" %}
+{% else %}
+  {% include "includes/page_intro.html" with back_url=prayer_url back_label="Prayer" title="New Prayer" subtitle="Write what is on your heart." %}
+{% endif %}
 
 <div class="md:max-w-xl">
 <div class="bg-app-card-hi rounded-[2rem] p-10">
@@ -26,7 +30,7 @@
     <div class="pt-2">
       <button type="submit"
               class="gic-btn font-sans w-full bg-gradient-to-br from-[#695d4a] to-[#7a6e5a] text-white rounded-full py-4 text-xs tracking-normal font-light">
-        Save Prayer
+        {% if is_edit %}Update Prayer{% else %}Save Prayer{% endif %}
       </button>
     </div>
   </form>

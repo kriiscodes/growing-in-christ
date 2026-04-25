@@ -73,6 +73,22 @@
       margin-top: 2.5rem;
       line-height: 1.7;
     }
+    .btn {
+      cursor: pointer;
+      border: none;
+      transition: filter 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+    .btn:active { filter: brightness(0.96); transform: translateY(0); }
+    .still-offline {
+      font-family: 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.7rem;
+      color: #695D4A;
+      margin-top: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .still-offline.visible { opacity: 1; }
   </style>
 </head>
 <body>
@@ -84,8 +100,22 @@
       It looks like you've lost your connection.<br>
       Check your network and try again.
     </p>
-    <a href="/" class="btn">Go home</a>
+    <button class="btn" onclick="tryGoHome()">Go home</button>
+    <p class="still-offline" id="still-offline-msg">Still offline — please check your connection.</p>
     <p class="quote">"I can do all things through Christ who strengthens me."</p>
   </div>
+  <script>
+    function tryGoHome() {
+      if (navigator.onLine) {
+        window.location.href = '/';
+      } else {
+        var msg = document.getElementById('still-offline-msg');
+        msg.classList.add('visible');
+      }
+    }
+    window.addEventListener('online', function () {
+      window.location.href = '/';
+    });
+  </script>
 </body>
 </html>

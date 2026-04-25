@@ -43,10 +43,23 @@
 
       <div>
         <p class="font-sans text-[10px] tracking-[0.15em] uppercase text-ink-mid mb-1.5">Password</p>
-        {{ form.password }}
+        <div class="relative">
+          {{ form.password }}
+          <button type="button" onclick="togglePassword(this)"
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-ink-light hover:text-ink transition-colors duration-200">
+            <span class="ms text-xl">visibility_off</span>
+          </button>
+        </div>
         {% if form.password.errors %}
           <p class="font-sans mt-1.5 text-xs text-red-500 px-1">{{ form.password.errors.0 }}</p>
         {% endif %}
+      </div>
+
+      <div class="flex justify-end">
+        <a href="{% url 'accounts:password_reset' %}"
+           class="font-sans text-xs text-ink-light hover:text-ink transition-colors duration-200">
+          Forgot password?
+        </a>
       </div>
 
       <div class="pt-2">
@@ -70,5 +83,19 @@
 
   </div>
 </div>
+
+<script>
+  function togglePassword(btn) {
+    var input = btn.parentElement.querySelector('input');
+    var icon = btn.querySelector('.ms');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = 'visibility';
+    } else {
+      input.type = 'password';
+      icon.textContent = 'visibility_off';
+    }
+  }
+</script>
 
 {% endblock %}

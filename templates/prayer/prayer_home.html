@@ -35,7 +35,7 @@
 {% if prayer_entries %}
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     {% for entry in prayer_entries %}
-      <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-10">
+      <div class="bg-gradient-to-tr from-[#FFFCF7] to-[#F0EEE5] rounded-[2rem] p-5 md:p-10">
 
         {% if entry.title %}
           <p class="font-serif text-sm font-semibold text-ink mb-2 leading-tight">{{ entry.title }}</p>
@@ -44,21 +44,31 @@
         <p class="font-serif text-sm text-ink-mid leading-loose">{{ entry.content|truncatewords:30 }}</p>
 
         <div class="flex items-center justify-between mt-5 gap-3">
-          <p class="font-sans text-[10px] text-ink-light">{{ entry.created_at|date:"N j, Y" }}</p>
+          <p class="font-sans text-xs text-ink-mid">{{ entry.created_at|date:"N j, Y" }}</p>
 
-          {% if entry.is_answered %}
-            <span class="font-sans text-xs text-accent font-medium tracking-wide">
-              Answered{% if entry.answered_at %} · {{ entry.answered_at|date:"N j" }}{% endif %}
-            </span>
-          {% else %}
-            <form method="post" action="{% url 'prayer:mark_answered' entry.pk %}">
-              {% csrf_token %}
-              <button type="submit"
-                      class="font-sans text-xs text-ink-light tracking-wide hover:text-ink-mid transition-colors duration-300">
-                Mark as answered
-              </button>
-            </form>
-          {% endif %}
+          <div class="flex items-center gap-3">
+            <a href="{% url 'prayer:edit_prayer' entry.pk %}"
+               class="text-ink-light hover:text-ink transition-colors duration-200">
+              <span class="ms text-lg">edit</span>
+            </a>
+            <button data-delete-url="{% url 'prayer:delete_prayer' entry.pk %}"
+                    class="text-ink-light hover:text-ink transition-colors duration-200">
+              <span class="ms text-lg">delete</span>
+            </button>
+            {% if entry.is_answered %}
+              <span class="font-sans text-xs text-accent font-medium tracking-wide">
+                Answered{% if entry.answered_at %} · {{ entry.answered_at|date:"N j" }}{% endif %}
+              </span>
+            {% else %}
+              <form method="post" action="{% url 'prayer:mark_answered' entry.pk %}">
+                {% csrf_token %}
+                <button type="submit"
+                        class="font-sans text-xs text-ink-light tracking-wide hover:text-ink-mid transition-colors duration-300">
+                  Mark as answered
+                </button>
+              </form>
+            {% endif %}
+          </div>
         </div>
 
       </div>
