@@ -113,13 +113,20 @@ def leader_overview(request):
     checkin_count  = sum(1 for m in member_data if m['checkin'])
     takeaway_count = sum(1 for m in member_data if m['takeaway'])
 
+    active_filter = request.GET.get('filter', '')
+    if active_filter == 'checkin':
+        member_data = [m for m in member_data if m['checkin']]
+    elif active_filter == 'takeaway':
+        member_data = [m for m in member_data if m['takeaway']]
+
     return render(request, 'core/leader_overview.html', {
         'active_week': active_week,
         'previous_week': previous_week,
         'member_data': member_data,
-        'member_count': len(member_data),
+        'member_count': len(members),
         'checkin_count': checkin_count,
         'takeaway_count': takeaway_count,
+        'active_filter': active_filter,
     })
 
 

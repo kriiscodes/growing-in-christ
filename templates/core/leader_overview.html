@@ -8,20 +8,23 @@
 
 {% if member_data %}
 
-  <!-- Summary strip -->
+  <!-- Summary strip — tap to filter -->
   <div class="grid grid-cols-3 gap-3 mb-6">
-    <div class="bg-app-card rounded-2xl px-4 py-4 text-center">
-      <p class="font-serif text-2xl text-ink font-light">{{ member_count }}</p>
-      <p class="font-sans text-[9px] tracking-widest uppercase text-ink-light mt-1">Members</p>
-    </div>
-    <div class="bg-app-card rounded-2xl px-4 py-4 text-center">
-      <p class="font-serif text-2xl text-ink font-light">{{ checkin_count }}</p>
-      <p class="font-sans text-[9px] tracking-widest uppercase text-ink-light mt-1">Checked in</p>
-    </div>
-    <div class="bg-app-card rounded-2xl px-4 py-4 text-center">
-      <p class="font-serif text-2xl text-ink font-light">{{ takeaway_count }}</p>
-      <p class="font-sans text-[9px] tracking-widest uppercase text-ink-light mt-1">Takeaways</p>
-    </div>
+    <a href="{% url 'core:leader_overview' %}"
+       class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if not active_filter %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
+      <p class="font-serif text-2xl font-light">{{ member_count }}</p>
+      <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if not active_filter %}text-app-bg/60{% else %}text-ink-light{% endif %}">All</p>
+    </a>
+    <a href="{% url 'core:leader_overview' %}?filter=checkin"
+       class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if active_filter == 'checkin' %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
+      <p class="font-serif text-2xl font-light">{{ checkin_count }}</p>
+      <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if active_filter == 'checkin' %}text-app-bg/60{% else %}text-ink-light{% endif %}">Checked in</p>
+    </a>
+    <a href="{% url 'core:leader_overview' %}?filter=takeaway"
+       class="rounded-2xl px-4 py-4 text-center transition-all duration-200 {% if active_filter == 'takeaway' %}bg-ink text-app-bg{% else %}bg-app-card hover:brightness-[0.97]{% endif %}">
+      <p class="font-serif text-2xl font-light">{{ takeaway_count }}</p>
+      <p class="font-sans text-[9px] tracking-widest uppercase mt-1 {% if active_filter == 'takeaway' %}text-app-bg/60{% else %}text-ink-light{% endif %}">Takeaways</p>
+    </a>
   </div>
 
   <!-- Member list -->
