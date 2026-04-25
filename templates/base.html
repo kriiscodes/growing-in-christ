@@ -71,6 +71,21 @@
     .page-enter {
       animation: pageEnter 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+    @keyframes gicSpin { to { transform: rotate(360deg); } }
+    .gic-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.25);
+      border-top-color: rgba(255,255,255,0.9);
+      animation: gicSpin 0.65s linear infinite;
+      vertical-align: middle;
+    }
+    .gic-spinner-dark {
+      border-color: rgba(105,93,74,0.18);
+      border-top-color: #695d4a;
+    }
   </style>
 
   {% block extra_head %}{% endblock %}
@@ -308,6 +323,16 @@
       document.getElementById('delete-cancel').addEventListener('click', closeModal);
       document.getElementById('delete-modal-backdrop').addEventListener('click', closeModal);
     })();
+
+    // Submit button loading state — covers every form automatically
+    document.addEventListener('submit', function(e) {
+      var btn = e.target.querySelector('[type="submit"]');
+      if (!btn || btn.disabled) return;
+      var dark = !btn.className.includes('text-white');
+      btn.disabled = true;
+      btn.style.opacity = '0.75';
+      btn.innerHTML = '<span class="gic-spinner' + (dark ? ' gic-spinner-dark' : '') + '"></span>';
+    });
   </script>
 
 </body>
